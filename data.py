@@ -18,7 +18,7 @@ limit = {
 
 # create a dictionary with (key = line_id, value = text)
 def get_id2line():
-    lines = open('data_clean.txt', encoding='utf-8', errors='ignore').read().split('\n')
+    lines = open('data/data_clean.txt', encoding='utf-8', errors='ignore').read().split('\n')
     id2line = {}
     uid = 0
     for line in lines:
@@ -28,7 +28,7 @@ def get_id2line():
 
 # create conversaton sequences with list of [list of line ids]
 def get_conversations():
-    conv_lines = open('data_clean.txt', encoding='utf-8', errors='ignore').read().split('\n')
+    conv_lines = open('data/data_clean.txt', encoding='utf-8', errors='ignore').read().split('\n')
     convs = []
     lines = [line for line in conv_lines]
     for line_num in range(len(lines)-1):
@@ -116,8 +116,6 @@ def zero_pad(qtokenized, atokenized, w2idx):
         q_indices = pad_seq(qtokenized[i], w2idx, limit['maxq'])
         a_indices = pad_seq(atokenized[i], w2idx, limit['maxa'])
 
-        #print(len(idx_q[i]), len(q_indices))
-        #print(len(idx_a[i]), len(a_indices))
         idx_q[i] = np.array(q_indices)
         idx_a[i] = np.array(a_indices)
 
@@ -184,8 +182,8 @@ def main():
 
     print('\n >> save numpy arrays to disk')
     # save them
-    np.save('idx_q.npy', idx_q)
-    np.save('idx_a.npy', idx_a)
+    np.save('data/idx_q.npy', idx_q)
+    np.save('data/idx_a.npy', idx_a)
 
     # let us now save the necessary dictionaries
     metadata = {
@@ -196,7 +194,7 @@ def main():
                 }
 
     # write to disk : data control dictionaries
-    with open('metadata.pkl', 'wb') as f:
+    with open('data/metadata.pkl', 'wb') as f:
         pkl.dump(metadata, f)
 
     # count of unknowns
@@ -238,11 +236,11 @@ def decode(sequence, lookup, separator=''): # 0 used for padding, is ignored
 
 def load_data(PATH=''):
     # read data control dictionaries
-    with open(PATH + 'metadata.pkl', 'rb') as f:
+    with open(PATH + 'data/metadata.pkl', 'rb') as f:
         metadata = pkl.load(f)
     # read numpy arrays
-    idx_q = np.load(PATH + 'idx_q.npy')
-    idx_a = np.load(PATH + 'idx_a.npy')
+    idx_q = np.load(PATH + 'data/idx_q.npy')
+    idx_a = np.load(PATH + 'data/idx_a.npy')
     return metadata, idx_q, idx_a
 
 
