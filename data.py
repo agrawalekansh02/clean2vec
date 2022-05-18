@@ -7,7 +7,7 @@ import itertools
 EN_WHITELIST = '0123456789abcdefghijklmnopqrstuvwxyz ' # space is included in whitelist
 EN_BLACKLIST = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\''
 UNK = 'unk'
-VOCAB_SIZE = 8000
+VOCAB_SIZE = 5000
 
 limit = {
         'maxq' : 25,
