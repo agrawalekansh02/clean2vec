@@ -7,7 +7,7 @@ import itertools
 EN_WHITELIST = '0123456789abcdefghijklmnopqrstuvwxyz ' # space is included in whitelist
 EN_BLACKLIST = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\''
 UNK = 'unk'
-VOCAB_SIZE = 5000
+VOCAB_SIZE = 5500
 
 limit = {
         'maxq' : 25,
@@ -48,6 +48,7 @@ def filter_line(line, whitelist):
     return ''.join([ch for ch in line if ch in whitelist])
 
 # remove too long or too short sequences
+# add eos and sos tokens
 def filter_data(qseq, aseq):
     filtered_q, filtered_a = [], []
     raw_data_len = len(qseq)
@@ -58,8 +59,8 @@ def filter_data(qseq, aseq):
         qlen, alen = len(qseq[i].split(' ')), len(aseq[i].split(' '))
         if qlen >= limit['minq'] and qlen <= limit['maxq']:
             if alen >= limit['mina'] and alen <= limit['maxa']:
-                filtered_q.append(qseq[i])
-                filtered_a.append(aseq[i])
+                filtered_q.append("<SOS> " + qseq[i] + " <EOS>")
+                filtered_a.append("<SOS> " + aseq[i] + " <EOS>")
 
     # print the fraction of the original data, filtered
     filt_data_len = len(filtered_q)
@@ -75,7 +76,7 @@ def index_(tokenized_sentences, vocab_size):
     # get vocabulary of 'vocab_size' most used words
     vocab = freq_dist.most_common(vocab_size)
     # index2word
-    index2word = ['_'] + [UNK] + [ x[0] for x in vocab ]
+    index2word = ['_'] + ["<UNK>"] + [x[0] for x in vocab]
     # word2index
     word2index = dict([(w,i) for i,w in enumerate(index2word)] )
     return index2word, word2index, freq_dist
@@ -103,18 +104,18 @@ def filter_unk(qtokenized, atokenized, w2idx):
 
     return filtered_q, filtered_a
 
-# sequences to array of indeces and zero pad
+# sequences to array of indeces and zero
 def zero_pad(qtokenized, atokenized, w2idx):
     # num of rows
     data_len = len(qtokenized)
 
     # numpy arrays to store indices
-    idx_q = np.zeros([data_len, limit['maxq']], dtype=np.int32)
-    idx_a = np.zeros([data_len, limit['maxa']], dtype=np.int32)
+    idx_q = np.zeros([data_len, limit['maxq']+2], dtype=np.int32)
+    idx_a = np.zeros([data_len, limit['maxa']+2], dtype=np.int32)
 
     for i in range(data_len):
-        q_indices = pad_seq(qtokenized[i], w2idx, limit['maxq'])
-        a_indices = pad_seq(atokenized[i], w2idx, limit['maxa'])
+        q_indices = pad_seq(qtokenized[i], w2idx, limit['maxq']+2)
+        a_indices = pad_seq(atokenized[i], w2idx, limit['maxa']+2)
 
         idx_q[i] = np.array(q_indices)
         idx_a[i] = np.array(a_indices)
