@@ -207,18 +207,15 @@ def main():
     print('Dataset count : ' + str(idx_q.shape[0]))
 
 
-def split_dataset(x, y, ratio = [0.7, 0.15, 0.15] ):
+def split_dataset(x, y, ratio=0.7 ):
     # number of examples
     data_len = len(x)
-    lens = [ int(data_len*item) for item in ratio ]
+    lens = int(data_len*ratio)
 
-    trainX, trainY = x[:lens[0]], y[:lens[0]]
-    testX, testY = x[lens[0]:lens[0]+lens[1]], y[lens[0]:lens[0]+lens[1]]
-    validX, validY = x[-lens[-1]:], y[-lens[-1]:]
+    trainX, trainY = x[:lens], y[:lens]
+    testX, testY = x[lens:], y[lens:]
 
-    return (trainX,trainY), (testX,testY), (validX,validY)
-
-
+    return (trainX,trainY), (testX,testY)
 
 def batch_gen(x, y, batch_size):
     # infinite while
