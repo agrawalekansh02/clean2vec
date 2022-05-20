@@ -30,10 +30,10 @@ class Seq2Seq:
 
         self.model = tf.keras.Model(inputs=[self.encoder_inputs, self.decoder_inputs], outputs=self.output)
 
-    def inference(self, embedding_shape=50):
+    def inference(self, embedding_shape=256):
         # inputs for vectors based on encoder
-        decoder_state_hidden = tf.keras.layer.Input(shape=(embedding_shape,))
-        decoder_state_cell = tf.keras.layer.Input(shape=(embedding_shape,))
+        decoder_state_hidden = tf.keras.layers.Input(shape=(embedding_shape,))
+        decoder_state_cell = tf.keras.layers.Input(shape=(embedding_shape,))
         decoder_states_inputs = [decoder_state_hidden, decoder_state_cell]
 
         # adding embedded layer as third input
