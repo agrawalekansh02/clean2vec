@@ -34,7 +34,7 @@ def train():
 
     trainY = tf.keras.utils.to_categorical(trainY, VOCAB_SIZE)
 
-    model.fit([trainX1, trainX2], trainY, batch_size=64, epochs=300, validation_split=0.2)
+    model.fit([trainX1, trainX2], trainY, batch_size=256, epochs=100, validation_split=0.2)
     model.save('data/model.h5')
 
 
